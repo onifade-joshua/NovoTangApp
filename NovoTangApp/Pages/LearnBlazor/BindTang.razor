@@ -1,0 +1,123 @@
+﻿@page "/bindtang"
+<div class=" border w-100 mb-3"><p class="text-center fw-bold fs-2 text-primary pt-3">Welcome to Novotang store🎊!</p></div>
+<h2 class="text-success">Individual Product</h2>
+<div class="row">
+	<div class="col-4 border p-3 fw-bold">
+		<h3 class="text-primary fw-bold">Product Playground</h3> <hr />
+		<div>
+			Active: <input type="checkbox" @bind-value="Product.IsActive" checked="@(Product.IsActive? "checked": null)" /> <br />
+		</div>
+		<div>
+			Price: <input class="form-control" type="number" @bind-value="@Product.Price" @bind-value:event="oninput" /> <br />
+		</div>
+		<div>
+			Product Properties:
+			@*How to handle dropdowns*@
+			<select @bind="selectedProp">
+				@foreach (var prop in Product.ProductProperties)
+				{
+					@*This is display the selected property in the option section*@
+					<option value="@prop.Key">@prop.Key</option>
+				}
+			</select>
+		</div>
+	</div>
+	<div class="col-8 border px-3 fw-bold">
+		<h3 class="text-primary mt-2 pt-2 fw-bold">Product Summary</h3> <hr />
+		Name:@Product.Name <br />
+		Id:@Product.Id <br />
+		Active:@Product.IsActive <br />
+		Price:@Product.Price <br />
+		@*This is making sure if the Product is active or not*@
+		This Product is:@(Product.IsActive ? "Active" : "Inactive")<br />
+		Property Selected:@selectedProp<br />
+		@*This method is not to leave the input section empty*@
+		@if (!String.IsNullOrWhiteSpace(selectedProp))
+		{
+			@*This is just to retrieve values from the item property*@
+			<p>Products Value:@Product.ProductProperties.FirstOrDefault(u=>u.Key==selectedProp).Value</p>
+		}
+	</div>
+	<br />
+	<div class="col-12">
+		<h2 class="text-success pt-2">Product Table</h2>
+		<table class="table table-striped">
+			<tbody>
+				@foreach(var prod in Products)
+				{
+					<tr>
+						<td>
+							<input type="text" @bind-value="prod.Name" @bind-value:event="oninput" />
+						</td>
+						<td>
+							<input type="text" @bind-value="prod.Price" @bind-value:event="oninput" />
+						</td>
+						<td>
+							<input type="checkbox" @bind-value="prod.IsActive" checked="@(prod.IsActive? "checked": null)" />
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<h2 class="text-success">Product Summary</h2>
+		@foreach (var prod in Products)
+		{
+			<p>@prod.Name @prod.Id [@prod.Price] Is: @(prod.IsActive?"Active" : "Inactive")</p>
+		}
+	</div>
+</div>
+
+@code {
+	//This is making sure the selected property is empty
+	private string selectedProp = "";
+
+	Demo_Product Product = new()
+		{
+			Id = 1,
+			Name = "Johnson Shola",
+			IsActive = true,
+			Price = 25.77,
+
+			//Accessing Product Properties in order to use them;
+			ProductProperties = new List<Demo_ProductProp>()
+			{
+				new Demo_ProductProp{Id = 1, Key = "Color", Value = "Wine"},
+				new Demo_ProductProp{Id = 2, Key = "Size", Value = "25z"},
+				new Demo_ProductProp{Id = 3, Key = "Flavor", Value = "Grape"}
+			}
+		};
+
+	List<Demo_Product> Products = new();
+	protected override void OnInitialized()
+	{
+		Products.Add(new()
+			{
+				Id = 1,
+				Name = "Blessed Juice Ltd",
+				IsActive = false,
+				Price = 33.33,
+				ProductProperties = new()
+			{
+				new Demo_ProductProp{Id = 1, Key = "Flavor", Value = "Mango"},
+				new Demo_ProductProp{Id = 2, Key = "Size", Value = "50cl"},
+				new Demo_ProductProp{Id = 3, Key = "Color", Value = "Juice"}
+			}
+			});
+
+
+		Products.Add(new()
+			{
+				Id = 2,
+				Name = "Covenant Drinks",
+				IsActive = false,
+				Price = 56.88,
+				ProductProperties = new()
+			{
+				new Demo_ProductProp{Id = 1, Key = "Flavor", Value = "Chocolate"},
+				new Demo_ProductProp{Id = 2, Key = "Size", Value = "45cl"},
+				new Demo_ProductProp{Id = 3, Key = "Color", Value = "White"}
+			}
+			});
+	}
+}
+
